@@ -146,8 +146,8 @@ export default function App() {
     const accuracy = Math.round((finalScore / totalVisitors) * 100);
 
     const gameOverReason = mistakes >= MAX_MISTAKES 
-      ? "❌ Too many mistakes! Review the scenarios and try again."
-      : "⏱ Time’s up or training complete.";
+      ? "Too many mistakes! Review the scenarios and try again."
+      : "Time’s up or training complete.";
 
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 flex items-center justify-center p-8">
@@ -177,7 +177,7 @@ export default function App() {
 
           <div className="mb-6">
             <p className="text-xl text-white mb-2">
-              {accuracy >= 90 ? "🏆 Excellent Performance!" : accuracy >= 70 ? "✨ Good Work!" : "📚 Keep Training!"}
+              {accuracy >= 90 ? "Excellent Performance!" : accuracy >= 70 ? "Good Work!" : "Keep Training!"}
             </p>
             <p className="text-cyan-400/70">
               {accuracy >= 90
