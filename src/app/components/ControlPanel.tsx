@@ -24,7 +24,7 @@ export function ControlPanel({
   const minutes = Math.floor(timeRemaining / 60);
   const seconds = timeRemaining % 60;
   const isLowTime = timeRemaining < 30;
-
+  const isCritical = timeRemaining <= 10;
   return (
     <div className="bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 rounded-lg border border-cyan-500/20 p-6 shadow-xl">
       <div className="flex items-center justify-between gap-6">
@@ -32,7 +32,9 @@ export function ControlPanel({
         <div className="flex items-center gap-6">
           {/* Timer */}
           <div className={`flex items-center gap-3 px-4 py-3 rounded-lg border ${
-            isLowTime 
+            isCritical
+              ? 'bg-red-500/20 border-red-500 animate-pulse'
+              : isLowTime 
               ? 'bg-red-500/10 border-red-500/30' 
               : 'bg-slate-800/50 border-cyan-500/20'
           }`}>
@@ -40,7 +42,11 @@ export function ControlPanel({
             <div>
               <p className="text-xs text-cyan-400/70 uppercase tracking-wider">Time</p>
               <p className={`text-2xl font-mono font-bold ${
-                isLowTime ? 'text-red-400' : 'text-white'
+                isCritical
+                  ? 'text-red-500 animate-pulse'
+                  : isLowTime
+                  ? 'text-red-400'
+                  : 'text-white'
               }`}>
                 {String(minutes).padStart(2, '0')}:{String(seconds).padStart(2, '0')}
               </p>

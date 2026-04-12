@@ -5,6 +5,7 @@ import { ControlPanel } from "./components/ControlPanel";
 import { FeedbackPopup } from "./components/FeedbackPopup";
 import { generateScenarios, type Scenario } from "./components/GameData";
 import { Shield } from "lucide-react";
+import warningSound from "../assets/sounds/8_sec_running_out.mp3";
 
 export default function App() {
   const [scenarios] = useState<Scenario[]>(() => generateScenarios());
@@ -29,12 +30,24 @@ export default function App() {
   const currentScenario = scenarios[currentScenarioIndex];
   const TARGET_SCORE = 15;
   const MAX_MISTAKES = 3;
+  const [hasPlayedWarning, setHasPlayedWarning] = useState(false);
+  const warningAudio = new Audio(warningSound);
 
   // Timer countdown
   useEffect(() => {
-    if (timeRemaining <= 0 || score >= TARGET_SCORE) {
+    if (
+      timeRemaining <= 0 ||
+      score >= TARGET_SCORE ||
+      mistakes >= MAX_MISTAKES
+    ) {
       setGameOver(true);
       return;
+    }
+
+    // 🔊 Play warning sound at 10 seconds
+    if (timeRemaining === 8 && !hasPlayedWarning) {
+      warningAudio.play();
+      setHasPlayedWarning(true);
     }
 
     const timer = setInterval(() => {
@@ -42,7 +55,7 @@ export default function App() {
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [timeRemaining, currentScenarioIndex, scenarios.length]);
+  }, [timeRemaining, score, mistakes, hasPlayedWarning]);
 
   const handleDecision = useCallback(
     (decision: "approve" | "deny") => {
@@ -131,6 +144,7 @@ export default function App() {
     setTimeRemaining(180);
     setScore(0);
     setMistakes(0);
+    setHasPlayedWarning(false);
     setGameOver(false);
     setFeedback({
     show: false,
