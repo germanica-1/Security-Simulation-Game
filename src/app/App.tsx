@@ -9,11 +9,12 @@ import { useRef } from "react";
 import warningSound from "../assets/sounds/8_sec_running_out.mp3";
 import wrongSound from "../assets/sounds/wrong_answer_sfx.mp3";
 import correctSound from "../assets/sounds/correct_answer_sfx.mp3";
+import clickSound from "../assets/sounds/button_click_sfx.mp3";
 
 export default function App() {
   const [scenarios] = useState<Scenario[]>(() => generateScenarios());
   const [currentScenarioIndex, setCurrentScenarioIndex] = useState(0);
-  const [timeRemaining, setTimeRemaining] = useState(180); // 3 minutes
+  const [timeRemaining, setTimeRemaining] = useState(90); // 1:30 timer
   const [score, setScore] = useState(0);
   const [mistakes, setMistakes] = useState(0);
   const [isProcessing, setIsProcessing] = useState(false);
@@ -31,14 +32,51 @@ export default function App() {
   const [gameOver, setGameOver] = useState(false);
 
   const currentScenario = scenarios[currentScenarioIndex];
-  const TARGET_SCORE = 15;
+  const TARGET_SCORE = 10;
   const MAX_MISTAKES = 3;
   const [hasPlayedWarning, setHasPlayedWarning] = useState(false);
-  const warningAudio = new Audio(warningSound);
+  //audio refs and objects
+  const warningAudioRef = useRef<HTMLAudioElement | null>(null);
   const wrongAudioRef = useRef<HTMLAudioElement | null>(null);
   const correctAudio = new Audio(correctSound);
   correctAudio.preload = "auto";
+  const clickAudio = new Audio(clickSound);
+  clickAudio.preload = "auto";
+  //screen shake state
   const [shake, setShake] = useState(false);
+
+  const clickAudioRef = useRef<HTMLAudioElement | null>(null);
+  useEffect(() => {
+    clickAudioRef.current = new Audio(clickSound);
+    clickAudioRef.current.volume = 0.5;
+  }, []);
+
+  const playClick = () => {
+  const audio = clickAudioRef.current;
+  if (!audio) return;
+
+  audio.currentTime = 0;
+  audio.play();
+
+  // force stop after 1 second
+  setTimeout(() => {
+    audio.pause();
+    audio.currentTime = 0;
+  }, 1000);
+};
+  
+
+  useEffect(() => {
+  const audio = new Audio(warningSound);
+  audio.loop = true;
+  audio.volume = 0.6;
+  warningAudioRef.current = audio;
+
+  return () => {
+    audio.pause();
+    audio.currentTime = 0;
+    };
+  }, []);
 
   useEffect(() => {
     wrongAudioRef.current = new Audio(wrongSound);
@@ -54,13 +92,15 @@ export default function App() {
       score >= TARGET_SCORE ||
       mistakes >= MAX_MISTAKES
     ) {
+      warningAudioRef.current?.pause();
+      warningAudioRef.current!.currentTime = 0;
       setGameOver(true);
       return;
     }
 
-    // Play warning sound at 8 seconds
-    if (timeRemaining === 8 && !hasPlayedWarning) {
-      warningAudio.play();
+    // Play warning sound at 30 seconds
+    if (timeRemaining <= 30 && !hasPlayedWarning) {
+      warningAudioRef.current?.play();
       setHasPlayedWarning(true);
     }
 
@@ -164,8 +204,21 @@ export default function App() {
     [currentScenario, isProcessing, gameOver],
   );
 
-  const handleApprove = () => handleDecision("approve");
-  const handleDeny = () => handleDecision("deny");
+  const handleApprove = () => {
+    playClick();
+
+    setTimeout(() => {
+      handleDecision("approve");
+    }, 120);
+  };
+
+  const handleDeny = () => {
+    playClick();
+
+    setTimeout(() => {
+      handleDecision("deny");
+    }, 120);
+  };
 
   const closeFeedback = () => {
     setFeedback((prev) => ({ ...prev, show: false }));
@@ -173,7 +226,7 @@ export default function App() {
 
   const restartGame = () => {
     setCurrentScenarioIndex(0);
-    setTimeRemaining(180);
+    setTimeRemaining(90);
     setScore(0);
     setMistakes(0);
     setHasPlayedWarning(false);
@@ -184,6 +237,11 @@ export default function App() {
       decision: "approve",
       reason: "",
     });
+    warningAudioRef.current?.pause();
+    if (warningAudioRef.current) {
+      warningAudioRef.current.currentTime = 0;
+    }
+    setHasPlayedWarning(false);
   };
 
   if (gameOver || currentScenarioIndex >= scenarios.length) {

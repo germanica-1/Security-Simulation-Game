@@ -24,7 +24,7 @@ export function ControlPanel({
   const minutes = Math.floor(timeRemaining / 60);
   const seconds = timeRemaining % 60;
   const isLowTime = timeRemaining < 30;
-  const isCritical = timeRemaining <= 10;
+  const isCritical = timeRemaining <= 30;
   return (
     <div className="bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 rounded-lg border border-cyan-500/20 p-6 shadow-xl">
       <div className="flex items-center justify-between gap-6">
