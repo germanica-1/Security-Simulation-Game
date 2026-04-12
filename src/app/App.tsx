@@ -5,7 +5,9 @@ import { ControlPanel } from "./components/ControlPanel";
 import { FeedbackPopup } from "./components/FeedbackPopup";
 import { generateScenarios, type Scenario } from "./components/GameData";
 import { Shield } from "lucide-react";
+import { useRef } from "react";
 import warningSound from "../assets/sounds/8_sec_running_out.mp3";
+import wrongSound from "../assets/sounds/wrong_answer_sfx.mp3";
 
 export default function App() {
   const [scenarios] = useState<Scenario[]>(() => generateScenarios());
@@ -32,6 +34,15 @@ export default function App() {
   const MAX_MISTAKES = 3;
   const [hasPlayedWarning, setHasPlayedWarning] = useState(false);
   const warningAudio = new Audio(warningSound);
+  const wrongAudioRef = useRef<HTMLAudioElement | null>(null);
+
+  useEffect(() => {
+    wrongAudioRef.current = new Audio(wrongSound);
+    if (wrongAudioRef.current) {
+      wrongAudioRef.current.volume = 1.0;
+    }
+  }, []);
+    
 
   // Timer countdown
   useEffect(() => {
@@ -105,6 +116,11 @@ export default function App() {
           return newScore;
         });
       } else {
+        //PLAY WRONG SOUND HERE
+        wrongAudioRef.current?.pause();
+        wrongAudioRef.current!.currentTime = 0;
+        wrongAudioRef.current?.play();
+
         setMistakes((prev) => {
           const newMistakes = prev + 1;
 
