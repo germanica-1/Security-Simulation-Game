@@ -21,7 +21,7 @@ export default function App() {
     show: boolean;
     isCorrect: boolean;
     decision: "approve" | "deny";
-    reason: string; 
+    reason: string;
   }>({
     show: false,
     isCorrect: false,
@@ -46,7 +46,6 @@ export default function App() {
       wrongAudioRef.current.volume = 1.0;
     }
   }, []);
-    
 
   // Timer countdown
   useEffect(() => {
@@ -59,7 +58,7 @@ export default function App() {
       return;
     }
 
-    // 🔊 Play warning sound at 10 seconds
+    // Play warning sound at 8 seconds
     if (timeRemaining === 8 && !hasPlayedWarning) {
       warningAudio.play();
       setHasPlayedWarning(true);
@@ -99,7 +98,8 @@ export default function App() {
           if (!nameMatch) {
             mistakeReason = "You approved a visitor with a mismatched name.";
           } else if (!ageMatch) {
-            mistakeReason = "You approved a visitor with incorrect age details.";
+            mistakeReason =
+              "You approved a visitor with incorrect age details.";
           } else if (!isValidStatus) {
             mistakeReason = "You approved an expired ID.";
           }
@@ -112,10 +112,10 @@ export default function App() {
       if (isCorrect) {
         const audio = new Audio(correctSound);
         audio.addEventListener("loadedmetadata", () => {
-        audio.pause();
-        audio.currentTime = 2;
-        audio.volume = 1.0;
-        audio.play();
+          audio.pause();
+          audio.currentTime = 2;
+          audio.volume = 1.0;
+          audio.play();
         });
 
         setScore((prev) => {
@@ -127,7 +127,7 @@ export default function App() {
 
           return newScore;
         });
-        } else {
+      } else {
         //PLAY WRONG SOUND HERE
         wrongAudioRef.current?.pause();
         wrongAudioRef.current!.currentTime = 0;
@@ -142,13 +142,17 @@ export default function App() {
 
           return newMistakes;
         });
+
+        //SCREEN SHAKE TRIGGER
+        setShake(true);
+        setTimeout(() => setShake(false), 400);
       }
 
       setFeedback({
         show: true,
         isCorrect,
         decision,
-        reason: mistakeReason, 
+        reason: mistakeReason,
       });
 
       // Move to next scenario after feedback
@@ -157,7 +161,7 @@ export default function App() {
         setIsProcessing(false);
       }, 2500);
     },
-    [currentScenario, isProcessing, gameOver]
+    [currentScenario, isProcessing, gameOver],
   );
 
   const handleApprove = () => handleDecision("approve");
@@ -175,21 +179,22 @@ export default function App() {
     setHasPlayedWarning(false);
     setGameOver(false);
     setFeedback({
-    show: false,
-    isCorrect: false,
-    decision: "approve",
-    reason: "",
+      show: false,
+      isCorrect: false,
+      decision: "approve",
+      reason: "",
     });
   };
 
   if (gameOver || currentScenarioIndex >= scenarios.length) {
     const finalScore = score;
-    const totalVisitors = TARGET_SCORE; 
+    const totalVisitors = TARGET_SCORE;
     const accuracy = Math.round((finalScore / totalVisitors) * 100);
 
-    const gameOverReason = mistakes >= MAX_MISTAKES 
-      ? "Too many mistakes! Review the scenarios and try again."
-      : "Time’s up or training complete.";
+    const gameOverReason =
+      mistakes >= MAX_MISTAKES
+        ? "Too many mistakes! Review the scenarios and try again."
+        : "Time’s up or training complete.";
 
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 flex items-center justify-center p-8">
@@ -202,31 +207,42 @@ export default function App() {
 
           <div className="grid grid-cols-3 gap-6 mb-8">
             <div className="bg-slate-800/50 rounded-lg p-6 border border-cyan-500/20">
-              <p className="text-xs text-cyan-400/70 uppercase tracking-wider mb-2">Score</p>
+              <p className="text-xs text-cyan-400/70 uppercase tracking-wider mb-2">
+                Score
+              </p>
               <p className="text-4xl font-bold text-white">
-                {finalScore}<span className="text-cyan-400/50">/{totalVisitors}</span>
+                {finalScore}
+                <span className="text-cyan-400/50">/{totalVisitors}</span>
               </p>
             </div>
             <div className="bg-slate-800/50 rounded-lg p-6 border border-cyan-500/20">
-              <p className="text-xs text-cyan-400/70 uppercase tracking-wider mb-2">Accuracy</p>
+              <p className="text-xs text-cyan-400/70 uppercase tracking-wider mb-2">
+                Accuracy
+              </p>
               <p className="text-4xl font-bold text-cyan-400">{accuracy}%</p>
             </div>
             <div className="bg-slate-800/50 rounded-lg p-6 border border-cyan-500/20">
-              <p className="text-xs text-cyan-400/70 uppercase tracking-wider mb-2">Mistakes</p>
+              <p className="text-xs text-cyan-400/70 uppercase tracking-wider mb-2">
+                Mistakes
+              </p>
               <p className="text-4xl font-bold text-amber-400">{mistakes}</p>
             </div>
           </div>
 
           <div className="mb-6">
             <p className="text-xl text-white mb-2">
-              {accuracy >= 90 ? "Excellent Performance!" : accuracy >= 70 ? "Good Work!" : "Keep Training!"}
+              {accuracy >= 90
+                ? "Excellent Performance!"
+                : accuracy >= 70
+                  ? "Good Work!"
+                  : "Keep Training!"}
             </p>
             <p className="text-cyan-400/70">
               {accuracy >= 90
                 ? "You're ready for advanced security operations"
                 : accuracy >= 70
-                ? "You have solid security assessment skills"
-                : "Review the scenarios and try again"}
+                  ? "You have solid security assessment skills"
+                  : "Review the scenarios and try again"}
             </p>
           </div>
 
@@ -242,7 +258,11 @@ export default function App() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 p-6">
+    <div
+      className={`min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 p-6 ${
+        shake ? "animate-shake" : ""
+      }`}
+    >
       {/* Header */}
       <div className="mb-6">
         <div className="flex items-center justify-between mb-4">
@@ -251,8 +271,12 @@ export default function App() {
               <Shield className="w-7 h-7 text-white" />
             </div>
             <div>
-              <h1 className="text-3xl font-bold text-white">Access Control Challenge</h1>
-              <p className="text-cyan-400/70">Security & Network Training System (SeNTs)</p>
+              <h1 className="text-3xl font-bold text-white">
+                Access Control Challenge
+              </h1>
+              <p className="text-cyan-400/70">
+                Security & Network Training System (SeNTs)
+              </p>
             </div>
           </div>
           <div className="text-right">
@@ -295,7 +319,7 @@ export default function App() {
         show={feedback.show}
         isCorrect={feedback.isCorrect}
         decision={feedback.decision}
-        reason={feedback.reason} 
+        reason={feedback.reason}
         onClose={closeFeedback}
       />
     </div>
