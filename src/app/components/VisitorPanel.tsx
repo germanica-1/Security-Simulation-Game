@@ -6,6 +6,7 @@ interface VisitorPanelProps {
     age: number;
     purpose: string;
     avatar: string;
+    idNumber: string;
   };
 }
 
@@ -64,7 +65,20 @@ export function VisitorPanel({ visitor }: VisitorPanelProps) {
           </div>
           <p className="text-base text-white">{visitor.purpose}</p>
         </div>
+
+        <div className="bg-slate-800/50 rounded-lg p-4 border border-cyan-500/10">
+          <div className="flex items-center gap-2 mb-2">
+            <Shield className="w-4 h-4 text-cyan-400" />
+            <span className="text-xs text-cyan-400/70 uppercase tracking-wider">
+              ID Number
+            </span>
+          </div>
+          <p className="text-base text-white tracking-wider font-mono">
+            {visitor.idNumber}
+          </p>
+        </div>
       </div>
+
 
       {/* Status indicator */}
       <div className="mt-6 flex items-center justify-center gap-2 text-xs text-cyan-400/50">

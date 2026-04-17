@@ -31,6 +31,8 @@ export default function App() {
   });
   const [gameOver, setGameOver] = useState(false);
 
+
+
   const currentScenario = scenarios[currentScenarioIndex];
   const TARGET_SCORE = 10;
   const MAX_MISTAKES = 3;
@@ -52,29 +54,29 @@ export default function App() {
   }, []);
 
   const playClick = () => {
-  const audio = clickAudioRef.current;
-  if (!audio) return;
+    const audio = clickAudioRef.current;
+    if (!audio) return;
 
-  audio.currentTime = 0;
-  audio.play();
-
-  // force stop after 1 second
-  setTimeout(() => {
-    audio.pause();
     audio.currentTime = 0;
-  }, 1000);
-};
-  
+    audio.play();
+
+    // force stop after 1 second
+    setTimeout(() => {
+      audio.pause();
+      audio.currentTime = 0;
+    }, 1000);
+  };
+
 
   useEffect(() => {
-  const audio = new Audio(warningSound);
-  audio.loop = true;
-  audio.volume = 0.6;
-  warningAudioRef.current = audio;
+    const audio = new Audio(warningSound);
+    audio.loop = true;
+    audio.volume = 0.6;
+    warningAudioRef.current = audio;
 
-  return () => {
-    audio.pause();
-    audio.currentTime = 0;
+    return () => {
+      audio.pause();
+      audio.currentTime = 0;
     };
   }, []);
 
@@ -122,8 +124,15 @@ export default function App() {
       const nameMatch = scenario.visitor.name === scenario.idCard.name;
       const ageMatch = scenario.visitor.age === scenario.idCard.age;
       const isValidStatus = scenario.idCard.status === "Valid";
+      const purposeMatch = scenario.visitor.purpose === scenario.idCard.purpose;
+      const idMatch = scenario.visitor.idNumber === scenario.idCard.idNumber;
 
-      const isValid = nameMatch && ageMatch && isValidStatus;
+      const isValid =
+        nameMatch &&
+        ageMatch &&
+        purposeMatch &&
+        idMatch &&
+        isValidStatus;
 
       const isCorrect =
         (decision === "approve" && isValid) ||
@@ -134,17 +143,18 @@ export default function App() {
 
       if (!isCorrect) {
         if (decision === "approve") {
-          // Player approved but shouldn't have
           if (!nameMatch) {
             mistakeReason = "You approved a visitor with a mismatched name.";
           } else if (!ageMatch) {
-            mistakeReason =
-              "You approved a visitor with incorrect age details.";
+            mistakeReason = "You approved a visitor with incorrect age.";
+          } else if (!purposeMatch) {
+            mistakeReason = "You approved a visitor with mismatched purpose.";
+          } else if (!idMatch) {
+            mistakeReason = "You approved a visitor with invalid ID number.";
           } else if (!isValidStatus) {
             mistakeReason = "You approved an expired ID.";
           }
         } else {
-          // Player denied but shouldn't have
           mistakeReason = "You denied a valid visitor.";
         }
       }
@@ -317,9 +327,8 @@ export default function App() {
 
   return (
     <div
-      className={`min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 p-6 ${
-        shake ? "animate-shake" : ""
-      }`}
+      className={`min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 p-6 ${shake ? "animate-shake" : ""
+        }`}
     >
       {/* Header */}
       <div className="mb-6">

@@ -6,6 +6,7 @@ interface IDCardPanelProps {
     age: number;
     idNumber: string;
     status: "Valid" | "Expired";
+    purpose: string;
     issueDate: string;
     expiryDate: string;
   };
@@ -52,6 +53,10 @@ export function IDCardPanel({ card }: IDCardPanelProps) {
               <p className="text-xs text-cyan-400/70 uppercase tracking-wider mb-1">Full Name</p>
               <p className="text-lg font-semibold text-white">{card.name}</p>
             </div>
+            <div>
+              <p className="text-xs text-cyan-400/70 uppercase tracking-wider mb-1">Purpose</p>
+              <p className="text-base text-white">{card.purpose}</p>
+            </div>
             <div className="grid grid-cols-2 gap-3">
               <div>
                 <p className="text-xs text-cyan-400/70 uppercase tracking-wider mb-1">Age</p>
@@ -93,7 +98,6 @@ export function IDCardPanel({ card }: IDCardPanelProps) {
                 ))}
               </div>
             </div>
-            <p className="text-xs text-center text-cyan-400/70 mt-1 font-mono">{card.idNumber}</p>
           </div>
           <div className="ml-4">
             <div className="w-20 h-20 bg-white rounded flex items-center justify-center">
