@@ -1,5 +1,6 @@
 // Game data and scenarios for the security simulation
 
+//profile images
 import profile1 from "../../assets/images/profiles/profile_1.jfif";
 import profile2 from "../../assets/images/profiles/profile_2.jfif";
 import profile3 from "../../assets/images/profiles/profile_3.jfif";
@@ -7,12 +8,25 @@ import profile4 from "../../assets/images/profiles/profile_4.jfif";
 import profile5 from "../../assets/images/profiles/profile_5.jfif";
 import profile6 from "../../assets/images/profiles/profile_6.jfif";
 
+//voicelines
+import v1 from "../../assets/voicelines/male_voicelines/voice_1.m4a";
+import v2 from "../../assets/voicelines/male_voicelines/voice_2.m4a";
+import v3 from "../../assets/voicelines/male_voicelines/voice_3.m4a";
+import v4 from "../../assets/voicelines/male_voicelines/voice_4.m4a";
+import v5 from "../../assets/voicelines/male_voicelines/voice_5.m4a";
+import v6 from "../../assets/voicelines/male_voicelines/voice_6.m4a";
+import v7 from "../../assets/voicelines/male_voicelines/voice_7.m4a";
+import v8 from "../../assets/voicelines/male_voicelines/voice_8.m4a";
+
+
+
 export interface Visitor {
   name: string;
   age: number;
   purpose: string;
   idNumber: string;
   avatar: string;
+  voice: string; 
 }
 
 export interface IDCard {
@@ -33,6 +47,24 @@ export interface Scenario {
   reason: string;
 }
 
+
+const maleVoices = [v1, v2, v3, v4, v5, v6, v7, v8];
+
+let shuffledVoices: string[] = [];
+let voiceIndex = 0;
+
+function shuffle_voice(array: string[]) {
+  return [...array].sort(() => Math.random() - 0.5);
+}
+
+export function getNextVoice(): string {
+  if (voiceIndex >= shuffledVoices.length) {
+    shuffledVoices = shuffle(maleVoices);
+    voiceIndex = 0;
+  }
+
+  return shuffledVoices[voiceIndex++];
+}
 
 const profiles = [
   profile1,
@@ -155,6 +187,7 @@ function getRandomFutureDate(daysAhead: number): string {
 
 export function generateScenarios(): Scenario[] {
   const scenarios: Scenario[] = [];
+  
 
   // Generate 20 scenarios
   for (let i = 0; i < 20; i++) {
@@ -176,6 +209,7 @@ export function generateScenarios(): Scenario[] {
     ];
     const avatarQuery = avatarQueries[i % avatarQueries.length];
     const avatar = getNextProfile();
+    const voice = getNextVoice();
 
     // Determine scenario type (70% valid, 30% invalid)
     const random = Math.random();
@@ -275,6 +309,7 @@ export function generateScenarios(): Scenario[] {
         purpose,
         idNumber,
         avatar,
+        voice,
       },
       idCard: {
         name: cardName,

@@ -11,6 +11,8 @@ import wrongSound from "../assets/sounds/wrong_answer_sfx.mp3";
 import correctSound from "../assets/sounds/correct_answer_sfx.mp3";
 import clickSound from "../assets/sounds/button_click_sfx.mp3";
 
+
+
 export default function App() {
   const [scenarios] = useState<Scenario[]>(() => generateScenarios());
   const [currentScenarioIndex, setCurrentScenarioIndex] = useState(0);
@@ -33,6 +35,8 @@ export default function App() {
 
 
 
+
+  const voiceAudioRef = useRef<HTMLAudioElement | null>(null);
   const currentScenario = scenarios[currentScenarioIndex];
   const TARGET_SCORE = 10;
   const MAX_MISTAKES = 3;
@@ -79,6 +83,27 @@ export default function App() {
       audio.currentTime = 0;
     };
   }, []);
+
+  useEffect(() => {
+    if (!currentScenario) return;
+
+    // stop previous
+    if (voiceAudioRef.current) {
+      voiceAudioRef.current.pause();
+      voiceAudioRef.current.currentTime = 0;
+    }
+
+    const audio = new Audio(currentScenario.visitor.voice);
+    audio.volume = 1.0;
+
+    voiceAudioRef.current = audio;
+
+    // small delay feels more natural
+    setTimeout(() => {
+      audio.play().catch(() => {});
+    }, 300);
+
+  }, [currentScenarioIndex]);
 
   useEffect(() => {
     wrongAudioRef.current = new Audio(wrongSound);

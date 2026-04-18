@@ -7,6 +7,7 @@ interface VisitorPanelProps {
     purpose: string;
     avatar: string;
     idNumber: string;
+    
   };
 }
 
