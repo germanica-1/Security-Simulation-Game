@@ -109,7 +109,7 @@ const purposes = [
   "Facility Tour",
   "Vendor Appointment",
 
-  // SLIGHTLY SUSPICIOUS (makes player think)
+  // SLIGHTLY SUSPICIOUS (makes the player think)
   "Follow-up Visit",
   "Document Submission",
   "Personal Errand",
