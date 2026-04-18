@@ -1,5 +1,12 @@
 // Game data and scenarios for the security simulation
 
+import profile1 from "../../assets/images/profiles/profile_1.jfif";
+import profile2 from "../../assets/images/profiles/profile_2.jfif";
+import profile3 from "../../assets/images/profiles/profile_3.jfif";
+import profile4 from "../../assets/images/profiles/profile_4.jfif";
+import profile5 from "../../assets/images/profiles/profile_5.jfif";
+import profile6 from "../../assets/images/profiles/profile_6.jfif";
+
 export interface Visitor {
   name: string;
   age: number;
@@ -16,6 +23,7 @@ export interface IDCard {
   status: "Valid" | "Expired";
   issueDate: string;
   expiryDate: string;
+  avatar: string;
 }
 
 export interface Scenario {
@@ -23,6 +31,32 @@ export interface Scenario {
   idCard: IDCard;
   shouldApprove: boolean; // true = should be approved, false = should be denied
   reason: string;
+}
+
+
+const profiles = [
+  profile1,
+  profile2,
+  profile3,
+  profile4,
+  profile5,
+  profile6
+];
+
+let shuffledProfiles: string[] = [];
+let currentIndex = 0;
+
+function shuffle(array: string[]) {
+  return [...array].sort(() => Math.random() - 0.5);
+}
+
+function getNextProfile(): string {
+  if (currentIndex >= shuffledProfiles.length) {
+    shuffledProfiles = shuffle(profiles);
+    currentIndex = 0;
+  }
+
+  return shuffledProfiles[currentIndex++];
 }
 
 const purposes = [
@@ -131,6 +165,7 @@ export function generateScenarios(): Scenario[] {
     const purpose = purposes[Math.floor(Math.random() * purposes.length)];
     const idNumber = generateIDNumber();
 
+
     // Use Unsplash photos for avatars
     const avatarQueries = [
       "professional business person",
@@ -140,7 +175,7 @@ export function generateScenarios(): Scenario[] {
       "professional portrait"
     ];
     const avatarQuery = avatarQueries[i % avatarQueries.length];
-    const avatar = `https://i.pravatar.cc/200?img=${i + 1}`;
+    const avatar = getNextProfile();
 
     // Determine scenario type (70% valid, 30% invalid)
     const random = Math.random();
@@ -229,7 +264,7 @@ export function generateScenarios(): Scenario[] {
         : reasons.join(", ");
 
     const issueDate = getRandomDate(Math.floor(Math.random() * 1000) + 365);
-    const expiryDate = cardStatus === "Valid" 
+    const expiryDate = cardStatus === "Valid"
       ? getRandomFutureDate(Math.floor(Math.random() * 365) + 30)
       : getRandomDate(Math.floor(Math.random() * 365) + 1);
 
@@ -249,6 +284,7 @@ export function generateScenarios(): Scenario[] {
         status: cardStatus,
         issueDate,
         expiryDate,
+        avatar,
       },
       shouldApprove,
       reason,

@@ -9,6 +9,7 @@ interface IDCardPanelProps {
     purpose: string;
     issueDate: string;
     expiryDate: string;
+    avatar: string;
   };
 }
 
@@ -41,11 +42,12 @@ export function IDCardPanel({ card }: IDCardPanelProps) {
         {/* Photo placeholder and info */}
         <div className="grid grid-cols-3 gap-4 mb-6">
           <div className="col-span-1">
-            <div className="aspect-square bg-slate-600/50 rounded-lg border border-cyan-500/20 flex items-center justify-center">
-              <div className="text-center">
-                <div className="w-16 h-16 bg-slate-500/50 rounded-full mx-auto mb-2" />
-                <p className="text-xs text-cyan-400/50">PHOTO</p>
-              </div>
+            <div className="aspect-square rounded-lg overflow-hidden border border-cyan-500/20">
+              <img
+                src={card.avatar}
+                alt={card.name}
+                className="w-full h-full object-cover"
+              />
             </div>
           </div>
           <div className="col-span-2 space-y-3">
